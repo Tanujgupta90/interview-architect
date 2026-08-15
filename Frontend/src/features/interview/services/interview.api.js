@@ -1,10 +1,16 @@
-import axios from "axios"
+import axios from "axios";
 
+const API = axios.create({
+    // HARDCODED FIX: Forces your website buttons to talk directly to your live Render server, bypassing broken .env files
+    baseURL: "https://interview-architect.onrender.com/", 
+    withCredentials: true,
+    headers: {
+        "Content-Type": "application/json"
+    }
+});
 
-const api = axios.create({
-    baseURL: "http://localhost:3000",
-    withCredentials: true
-})
+export default API;
+
 
 /**
  * @description Service to generate interview report based on user self description, resume and job description.
