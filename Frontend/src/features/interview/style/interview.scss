@@ -477,3 +477,34 @@ $severity-low: #3fb950;
         border-color: rgba($severity-low, 0.25);
     }
 }
+
+/* TARGETED MOBILE DASHBOARD FIX */
+@media screen and (max-width: 768px) {
+    // 1. Force the sidebars and the text sections to stack vertically
+    .interview-container, 
+    .dashboard-layout,
+    .main-layout {
+        display: flex !important;
+        flex-direction: column !important;
+        height: auto !important;
+    }
+
+    // 2. Make the side navigation take full width at the top
+    .sidebar, 
+    .sections-panel {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        margin-bottom: 20px !important;
+    }
+
+    // 3. Make the question boxes and matching graphs stretch full width
+    .content-panel,
+    .questions-section,
+    .match-score-section,
+    .right-sidebar {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+}
