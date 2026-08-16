@@ -57,3 +57,33 @@ body,
         margin-bottom: 10px !important;
     }
 }
+
+
+/* UNIVERSAL MOBILE LAYOUT FIX */
+@media screen and (max-width: 768px) {
+    // Force EVERY flex or grid block in the layout to wrap vertically
+    #root, div, section, main {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        position: relative !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    // Force items to stay inside the screen boundaries without horizontal scrolling
+    * {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    // Ensure list text and inner blocks align vertically
+    ul, ol, li {
+        width: 100% !important;
+    }
+}
