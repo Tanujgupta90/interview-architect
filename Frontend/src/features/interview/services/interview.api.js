@@ -37,13 +37,12 @@ export const getAllInterviewReports = async () => {
     const response = await API.get("/api/interview/");
     return response.data;
 };
-
 /**
  * @description Service to generate resume pdf based on user self description, resume content and job description.
  */
 export const generateResumePdf = async ({ interviewReportId }) => {
-    // FIXED: Changed from API.post to API.get to match your backend route expectation
-    const response = await API.get(`/api/interview/resume/pdf/${interviewReportId}`, {
+    // FIXED: Switched back to .post, but changed 'null' to an empty object '{}' so the server can parse it correctly
+    const response = await API.post(`/api/interview/resume/pdf/${interviewReportId}`, {}, {
         responseType: "blob"
     });
 
