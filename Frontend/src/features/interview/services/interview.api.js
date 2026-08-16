@@ -41,10 +41,9 @@ export const getAllInterviewReports = async () => {
  * @description Service to generate resume pdf based on user self description, resume content and job description.
  */
 export const generateResumePdf = async ({ interviewReportId }) => {
-    // FIXED: Switched back to .post, but changed 'null' to an empty object '{}' so the server can parse it correctly
-    const response = await API.post(`/api/interview/resume/pdf/${interviewReportId}`, {}, {
-        responseType: "blob"
-    });
+    // FIXED: Removed the blob handler configuration so it parses the raw custom HTML text correctly
+    const response = await API.post(`/api/interview/resume/pdf/${interviewReportId}`, {});
 
     return response.data;
 };
+
