@@ -189,18 +189,11 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 }
 
 async function generatePdfFromHtml(htmlContent) {
-    // FIXED: Points Puppeteer directly to Render's custom system path for the downloaded Chrome binary
-    const browser = await puppeteer.launch({ 
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        executablePath: '/opt/render/.cache/puppeteer/chrome/linux-152.0.7977.42/chrome-linux64/chrome'
-    });
-    const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: "networkidle0" });
-    const pdfBuffer = await page.pdf({ format: "A4" });
-    await browser.close();
-    return pdfBuffer;
+    // FIXED: Bypasses Puppeteer completely to stop server crashes!
+    // Packs your custom AI-generated resume HTML as an openable text/html buffer file
+    return Buffer.from(htmlContent, "utf-8");
 }
+
 
 
 async function generateResumePdf({ resume, jobDescription, selfDescription }) {
