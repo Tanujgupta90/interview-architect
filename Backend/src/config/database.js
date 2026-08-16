@@ -1,38 +1,17 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const dns = require("dns");
 
+// FORCE FIX: Tells Render to look up MongoDB using IPv4 addresses instead of broken IPv6 loops
+dns.setDefaultResultOrder('ipv4first'); 
 
-async function connectToDB(){
-
+async function connectToDB() {
    try { 
-      //console.log(process.env.MONGO_URI)
-    await mongoose.connect(process.env.MONGO_URI)
-
-    console.log("connected to Database")
-}
-catch(err){
-    console.log(err)
-}
+       await mongoose.connect(process.env.MONGO_URI);
+       console.log("connected to Database");
+   }
+   catch (err) {
+       console.log("🔴 Connection Failed:", err.message);
+   }
 }
 
-module.exports = connectToDB
-
-
-
-
-// const mongoose = require("mongoose");
-// const dns = require("dns");
-
-// // Force Node.js to resolve addresses using IPv4 first (fixes Wi-Fi DNS bugs)
-// dns.setDefaultResultOrder('ipv4first'); 
-
-// async function connectToDB(){
-//    try { 
-//     await mongoose.connect(process.env.MONGO_URI);
-//     console.log("connected to Database");
-//    }
-//    catch (err){
-//     console.log("🔴 Connection Failed:", err.message);
-//    }
-// }
-
-// module.exports = connectToDB;
+module.exports = connectToDB;
