@@ -20,3 +20,40 @@ body,
     color: #e46363;
 
 }
+
+/* RESPONSIVE MOBILE ADJUSTMENTS */
+@media screen and (max-width: 768px) {
+    body, html {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .container, .main-content, .dashboard-wrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 10px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Stack sidebars and panels vertically on phones */
+    .sidebar, .nav-menu {
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Force grids to display as a single column */
+    .grid-layout, .skills-grid, .row-container, .dashboard {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+    }
+
+    /* Expand button targets for easy phone tapping */
+    button, .button {
+        width: 100% !important;
+        margin-bottom: 10px !important;
+    }
+}
