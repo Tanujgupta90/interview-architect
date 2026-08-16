@@ -1,9 +1,10 @@
 import axios from "axios"
 
 const api = axios.create({
-    baseURL:"http://localhost:3000",
+    baseURL: "https://interview-architect.onrender.com",
     withCredentials: true
-})
+});
+
 
 
 export async function register({ username, email, password }) {
