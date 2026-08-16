@@ -7,14 +7,20 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser())
 
-// UPDATE THIS BLOCK RIGHT HERE: Include your live frontend deployment domain
 app.use(cors({
-    origin: [
-        "http://localhost:5173",
-        "https://vercel.app"
-    ],
+    origin: function (origin, callback) {
+        // 1. Allow local environment testing
+        // 2. Allow any custom subdomain hosted on Vercel (.vercel.app)
+        // 3. Allow requests without an origin (like mobile apps, curl, or Postman)
+        if (!origin || origin.startsWith("http://localhost") || origin.endsWith("vercel.app")) {
+            callback(null, true);
+        } else {
+            callback(new Error("Blocked by CORS authorization security policy."));
+        }
+    },
     credentials: true
-}))
+}));
+
 
 //require all the routes here
 const authRouter = require("./routes/auth.routes")
