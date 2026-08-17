@@ -1,6 +1,7 @@
 const { generateInterviewReport, generateResumePdf } = require("../services/ai.service");
 const interviewReportModel = require("../models/interviewReport.model");
 
+
 /**
  * @description Controller to generate interview report based on user self description, resume and job description.
  */
@@ -28,7 +29,7 @@ async function generateInterViewReportController(req, res) {
         } catch (aiError) {
             console.error("AI Engine Failure, deploying schema-safe fallback payload:", aiError.message);
             
-            // 💡 FIXED SCHEMA STRUCTURE: Matches array objects and 'intention' properties exactly
+            // 💡 EXACT DATABASE SCHEMA MATCHING STRUCTURE FIXED HERE
             interViewReportByAi = {
                 matchScore: 75,
                 title: "General Web Development Position",
@@ -42,12 +43,18 @@ async function generateInterViewReportController(req, res) {
                     question: "Describe a difficult project challenge.", 
                     answer: "I broke down the dependencies and resolved issues step-by-step." 
                 }],
-                skillGaps: [{ intention: "Improvement Check", detail: "Review system logs and optimize framework flow" }],
-                preparationPlan: { intention: "Action Track", detail: "Focus on core debugging and architecture optimization." }
+                skillGaps: [{ 
+                    skill: "TypeScript and State Management Systems" // 👈 FIXED: Matches required 'skill' path
+                }],
+                preparationPlan: [{ 
+                    day: 1, // 👈 FIXED: Matches required 'day' path
+                    focus: "Frontend Core Engineering Concepts", // 👈 FIXED: Matches required 'focus' path
+                    tasks: ["Review prototype inheritance mechanisms", "Practice closures"]
+                }]
             };
         }
 
-        // Save cleanly using the safe, unpacked fields
+        // Save cleanly using your active model parameters
         const savedReport = await interviewReportModel.create({
             user: req.user.id,
             resume: parsedResumeText || "Not provided",
@@ -57,8 +64,8 @@ async function generateInterViewReportController(req, res) {
             title: interViewReportByAi?.title || "Assessment Report",
             technicalQuestions: interViewReportByAi?.technicalQuestions || [],
             behavioralQuestions: interViewReportByAi?.behavioralQuestions || [],
-            skillGaps: interViewReportByAi?.skillGaps || [],
-            preparationPlan: interViewReportByAi?.preparationPlan || { intention: "Default", detail: "Standard study track" }
+            skillGaps: interViewReportByAi?.skillGaps || interViewReportByAi?.skillGaps || [],
+            preparationPlan: interViewReportByAi?.preparationPlan || interViewReportByAi?.roadmap || []
         });
 
         console.log("=== DISPATCHING PACKED MONGO DOCUMENT OVER TO CLIENT ===");
@@ -76,6 +83,7 @@ async function generateInterViewReportController(req, res) {
         });
     }
 }
+
 
 
 
