@@ -65,9 +65,10 @@ async function generateInterViewReportController(req, res) {
             question: q.question || "Core Assessment Question",
             answer: q.answer || "Explain your technical problem-solving method."
         }));
-        
+
 
         // Save cleanly using your active model parameters
+             // Inside your generateInterViewReportController function
         const savedReport = await interviewReportModel.create({
             user: req.user.id,
             resume: parsedResumeText || "Not provided",
@@ -75,9 +76,11 @@ async function generateInterViewReportController(req, res) {
             jobDescription,
             matchScore: interViewReportByAi?.matchScore || 70,
             title: interViewReportByAi?.title || "Assessment Report",
-            technicalQuestions: interViewReportByAi?.technicalQuestions || [],
-            behavioralQuestions: interViewReportByAi?.behavioralQuestions || [],
-            skillGaps: interViewReportByAi?.skillGaps || interViewReportByAi?.skillGaps || [],
+            technicalQuestions: normalizedTechnicalQuestions, 
+            behavioralQuestions: normalizedBehavioralQuestions, 
+            
+            // 💡 FIXED: Check both singular and plural fields to be absolutely safe!
+            skillGaps: interViewReportByAi?.skillGaps || interViewReportByAi?.skillsGaps || [], 
             preparationPlan: interViewReportByAi?.preparationPlan || interViewReportByAi?.roadmap || []
         });
 

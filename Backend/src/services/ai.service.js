@@ -69,11 +69,21 @@ CRITICAL INSTRUCTIONS:
 4. You MUST generate exactly 3 distinct, real technical questions and answers. Each question object MUST include an "intention" field explaining what skill is being evaluated.
 5. You MUST generate exactly 3 distinct, real behavioral questions and answers. Each question object MUST include an "intention" field explaining the core competency checked.
 6. You MUST generate a full 3-day step-by-step roadmap array.
+7. 💡 CRITICAL: The "skillGaps" and "skillsGaps" fields MUST be an array of OBJECTS, where each object contains a key named "skill". Do NOT pass simple text strings.
 
 The JSON object MUST follow this exact property key structure precisely:
 {
   "matchScore": 85,
-  "skillsGaps": ["TypeScript", "Docker", "State Management"],
+  "skillsGaps": [
+    { "skill": "TypeScript Core Patterns" },
+    { "skill": "Docker Container Architecture" },
+    { "skill": "Centralized State Management Systems" }
+  ],
+  "skillGaps": [
+    { "skill": "TypeScript Core Patterns" },
+    { "skill": "Docker Container Architecture" },
+    { "skill": "Centralized State Management Systems" }
+  ],
   "technicalQuestions": [
     { "intention": "Core Language Check", "question": "Real Technical Q1?", "answer": "Short Answer 1." },
     { "intention": "Architecture Check", "question": "Real Technical Q2?", "answer": "Short Answer 2." },
@@ -91,6 +101,7 @@ The JSON object MUST follow this exact property key structure precisely:
   ]
 }
 `;
+
 
 
 // Inside Backend/src/services/ai.service.js -> generateInterviewReport function
