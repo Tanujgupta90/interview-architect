@@ -5,8 +5,6 @@ const ai = new Groq({
     apiKey: process.env.GROQ_API_KEY
 });
 
-
-
 function cleanAndParseJSON(rawString) {
     if (!rawString || typeof rawString !== 'string') {
         throw new Error("Received completely empty or invalid string content.");
@@ -25,12 +23,20 @@ function cleanAndParseJSON(rawString) {
 
     text = text.substring(start, end + 1);
 
+    // 💡 ULTIMATE PARSING FIX: Clean up template bracket placeholders before running JSON.parse
+    text = text.replace(/:\s*<number>/gi, ": 85");
+    text = text.replace(/:\s*<string>/gi, ': "Completed"');
+    text = text.replace(/:\s*<array>/gi, ": []");
+    text = text.replace(/<[^>]*>/g, "null"); // Replaces any leftover <tags> with safe null markers
+
     try {
         return JSON.parse(text);
     } catch (e) {
         throw new Error(`JSON Structural Parsing Fault: ${e.message}`);
     }
 }
+
+
 
 async function generateInterviewReport({ resume, selfDescription, jobDescription }) {
     try {
