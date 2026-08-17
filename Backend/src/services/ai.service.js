@@ -23,8 +23,7 @@ function cleanAndParseJSON(rawString) {
     // 2. Extract from the first opening bracket to the end of the text
     text = text.substring(start);
 
-    // 💡 ULTIMATE TRAILING CLUTTER FIX: Match brackets dynamically from left to right 
-    // to find the exact closing bracket of the primary JSON object body.
+    // Match brackets dynamically from left to right 
     let braceCount = 0;
     let endPosition = -1;
 
@@ -34,14 +33,17 @@ function cleanAndParseJSON(rawString) {
 
         if (braceCount === 0) {
             endPosition = i;
-            break; // Stop immediately when the main object closes!
+            break; 
         }
     }
 
-    // Slice out ONLY the exact primary JSON object block, omitting any conversational noise after it
     if (endPosition !== -1) {
         text = text.substring(0, endPosition + 1);
     }
+
+    // 💡 ULTIMATE UNTERMINATED STRING FIX: Replace actual newlines inside strings with escaped \n characters
+    // This stops unescaped multi-line responses from breaking the standard JSON parser!
+    text = text.replace(/\n/g, "\\n").replace(/\r/g, "\\r");
 
     // 3. Clean up potential template bracket placeholders before running JSON.parse
     text = text.replace(/:\s*<number>/gi, ": 85");
