@@ -12,15 +12,28 @@ const Home = () => {
 
     const navigate = useNavigate()
 
+
     const handleGenerateReport = async () => {
         const resumeFile = resumeInputRef.current?.files?.[0]
 
+        // 1. Validation check: Prevent empty submissions
+        if (!jobDescription && !selfDescription && !resumeFile) {
+            alert("Please provide a job description, self-description, or upload a resume file first!");
+            return;
+        }
+
         try {
-            const apiResult = await generateReport({
-                jobDescription,
-                selfDescription,
-                resumeFile
-            })
+            // 2. Use FormData to combine files and text strings together correctly
+            const formData = new FormData()
+            formData.append("jobDescription", jobDescription)
+            formData.append("selfDescription", selfDescription)
+            
+            if (resumeFile) {
+                formData.append("resumeFile", resumeFile) // Make sure this key matches your backend file upload middleware name!
+            }
+
+            // 3. Send the formData block directly to your hook handler
+            const apiResult = await generateReport(formData)
 
             // SAFE EXTRACTION LAYER: Unpacks the report document from any standard API response format wrapper
             const finalReportData = apiResult?.data?.data || apiResult?.data || apiResult;
@@ -28,11 +41,11 @@ const Home = () => {
 
             if (!targetId) {
                 console.error("Payload mismatch error. Missing document ID parameter. Received:", apiResult);
-                alert("The server did not return any report data. Check your backend console logs.")
+                alert("The server did not return any report ID. Check your backend console logs.")
                 return
             }
 
-            // Route to your report dashboard view
+            // Route to your report dashboard view cleanly
             navigate(`/interview/${targetId}`)
 
         } catch (error) {
@@ -41,6 +54,8 @@ const Home = () => {
         }
     }
 
+
+
     if (loading) {
         return (
             <main className='loading-screen'>
@@ -48,6 +63,8 @@ const Home = () => {
             </main>
         )
     }
+
+
 
     return (
         <div className='home-page'>
