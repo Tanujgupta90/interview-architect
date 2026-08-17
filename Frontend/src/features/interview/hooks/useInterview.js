@@ -14,11 +14,12 @@ export const useInterview = () => {
 
     const { loading, setLoading, report, setReport, reports, setReports } = context
 
-    const generateReport = async ({ jobDescription, selfDescription, resumeFile }) => {
+    const generateReport = async (formData) => { // 👈 Changed to accept the FormData directly
         setLoading(true)
         let response = null
         try {
-            response = await generateInterviewReport({ jobDescription, selfDescription, resumeFile })
+            // Pass the formData directly into your API call
+            response = await generateInterviewReport(formData)
             
             // CRITICAL FIX: Extract from either '.data' (from generation) or '.interviewReport' (from fetching)
             const extractedReport = response?.data || response?.interviewReport || response;
@@ -30,12 +31,12 @@ export const useInterview = () => {
             return extractedReport;
         } catch (error) {
             console.error("Hook Generation Error:", error)
+            throw error; // Throw error so the frontend Home.jsx catch block can see it
         } finally {
             setLoading(false)
         }
-
-        return null
     }
+
 
     const getReportById = async (interviewId) => {
         setLoading(true)
