@@ -65,20 +65,47 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
         const safeDesc = selfDescription ? selfDescription.toString().slice(0, 1000) : "Not provided";
         const safeJob = jobDescription ? jobDescription.toString().slice(0, 1500) : "Not provided";
 
-        const prompt = `You are a professional technical interviewer. Generate an interview report JSON structure based on:
-                        Resume Context: ${safeResume}
-                        Self Description: ${safeDesc}
-                        Target Job: ${safeJob}
+       // Inside Backend/src/services/ai.service.js
 
-                        Return ONLY valid raw JSON without markdown formatting. Structure:
-                        {
-                          "matchScore": 85,
-                          "title": "Strategy Profile",
-                          "technicalQuestions": [{"question": "Sample Q", "intention": "Sample Intent", "answer": "Sample Answer"}],
-                          "behavioralQuestions": [{"question": "Sample Q", "intention": "Sample Intent", "answer": "Sample Answer"}],
-                          "skillGaps": [{"skill": "Sample Skill", "severity": "Medium"}],
-                          "preparationPlan": [{"day": 1, "focus": "Focus Area", "tasks": ["Task 1"]}]
-                        }`;
+const prompt = `
+You are an expert technical interviewer. Analyze this job description and profile to generate a structured interview preparation report.
+Job Description: ${jobDescription}
+Self Description: ${selfDescription}
+
+You MUST return a single JSON object. Do NOT include any intro text, conversational words, or trailing text. 
+The JSON object MUST follow this exact property key structure:
+{
+  "matchScore": 85,
+  "skillsGaps": ["TypeScript", "Docker", "State Management"],
+  "technicalQuestions": [
+    {
+      "question": "What is the difference between Virtual DOM and Real DOM in React?",
+      "answer": "The Virtual DOM is an in-memory representation of the real DOM. React uses it to compute diffs and update the browser efficiently."
+    },
+    {
+      "question": "How do you handle state management across large scale modern JavaScript applications?",
+      "answer": "By using centralized stores like Redux Toolkit, Zustand, or the native Context API combined with custom hooks for modularity."
+    }
+  ],
+  "behavioralQuestions": [
+    {
+      "question": "Tell me about a time you faced a complex technical bug under a tight release deadline. How did you handle it?",
+      "answer": "I isolated the issue using chrome dev tools, prioritized a hotfix to restore stability, and documented the root cause for later clean up."
+    }
+  ],
+  "roadmap": [
+    {
+      "step": "Phase 1: Advanced Frontend Core",
+      "topics": ["Deep dive into React lifecycle methods", "Mastering CSS Grid layouts and responsive engineering architectures"]
+    },
+    {
+      "step": "Phase 2: Database and System Infrastructure",
+      "topics": ["RESTful API design safety layers", "Relational database indices optimization and schema normalization"]
+    }
+  ]
+}
+`;
+
 
         const response = await ai.chat.completions.create({
     model: "qwen/qwen3.6-27b", // 👈 FIXED: Swapped to Groq's active model ID
