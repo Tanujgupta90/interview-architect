@@ -46,31 +46,87 @@ You are an expert technical interviewer. Analyze this job description and profil
 Job Description: ${jobDescription}
 Self Description: ${selfDescription}
 
-CRITICAL INSTRUCTION: You MUST return a single, valid JSON object. 
-Do NOT include any markdown blocks, intro explanations, or trailing commentary text. 
-Ensure that values do NOT contain unescaped newline breaks or raw carriage returns. 
+CRITICAL INSTRUCTIONS:
+1. You MUST return a single, valid JSON object. 
+2. Do NOT include any markdown blocks (like \`\`\`json), intro explanations, or trailing commentary text.
+3. Ensure that values do NOT contain unescaped newline breaks or raw carriage returns.
+4. You MUST generate exactly 5 distinct, real technical questions and answers.
+5. You MUST generate exactly 5 distinct, real behavioral questions and answers.
+6. You MUST generate a full 5-day step-by-step roadmap array.
 
-The JSON object MUST follow this exact property key structure:
+The JSON object MUST follow this exact property key structure precisely:
 {
   "matchScore": 85,
   "skillsGaps": ["TypeScript", "Docker", "State Management"],
   "technicalQuestions": [
     {
-      "question": "Explain closure in JavaScript.",
-      "answer": "A closure gives an inner function access to the outer function scope even after the outer function returns."
+      "question": "Real Technical Question 1?",
+      "answer": "Real Detailed Technical Answer 1."
+    },
+    {
+      "question": "Real Technical Question 2?",
+      "answer": "Real Detailed Technical Answer 2."
+    },
+    {
+      "question": "Real Technical Question 3?",
+      "answer": "Real Detailed Technical Answer 3."
+    },
+    {
+      "question": "Real Technical Question 4?",
+      "answer": "Real Detailed Technical Answer 4."
+    },
+    {
+      "question": "Real Technical Question 5?",
+      "answer": "Real Detailed Technical Answer 5."
     }
   ],
   "behavioralQuestions": [
     {
-      "question": "Tell me about a challenge you solved.",
-      "answer": "I isolated a production routing bug by testing individual middleware pipelines step-by-step."
+      "question": "Real Behavioral Question 1?",
+      "answer": "Real Detailed Behavioral Answer 1."
+    },
+    {
+      "question": "Real Behavioral Question 2?",
+      "answer": "Real Detailed Behavioral Answer 2."
+    },
+    {
+      "question": "Real Behavioral Question 3?",
+      "answer": "Real Detailed Behavioral Answer 3."
+    },
+    {
+      "question": "Real Behavioral Question 4?",
+      "answer": "Real Detailed Behavioral Answer 4."
+    },
+    {
+      "question": "Real Behavioral Question 5?",
+      "answer": "Real Detailed Behavioral Answer 5."
     }
   ],
   "roadmap": [
     {
       "day": 1,
-      "focus": "Core Language Engineering Foundations",
-      "tasks": ["Review prototype inheritance mechanisms", "Practice asynchronous loop processing structures"]
+      "focus": "Day 1 Focus Topic",
+      "tasks": ["Task 1", "Task 2"]
+    },
+    {
+      "day": 2,
+      "focus": "Day 2 Focus Topic",
+      "tasks": ["Task 1", "Task 2"]
+    },
+    {
+      "day": 3,
+      "focus": "Day 3 Focus Topic",
+      "tasks": ["Task 1", "Task 2"]
+    },
+    {
+      "day": 4,
+      "focus": "Day 4 Focus Topic",
+      "tasks": ["Task 1", "Task 2"]
+    },
+    {
+      "day": 5,
+      "focus": "Day 5 Focus Topic",
+      "tasks": ["Task 1", "Task 2"]
     }
   ]
 }
@@ -134,11 +190,13 @@ async function generateResumePdf({ resume, jobDescription, selfDescription }) {
                         
                         Do not output JSON, do not use markdown code fence backticks (\`\`\`). Start your output directly with <!DOCTYPE html>.`;
 
-        const response = await ai.chat.completions.create({
-            model: ACTIVE_MODEL_ID,
-            messages: [{ role: "user", content: prompt }],
-            temperature: 0.4
-        });
+       // Inside Backend/src/services/ai.service.js -> generateResumePdf function
+const response = await ai.chat.completions.create({
+    model: "qwen/qwen3.6-27b", // 👈 FIXED: Use the active Groq model string directly here too!
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.2
+});
+
 
         let rawHtml = response.choices && response.choices[0] && response.choices[0].message ? response.choices[0].message.content : "";
         
