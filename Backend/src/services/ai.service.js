@@ -5,7 +5,8 @@ const ai = new Groq({
     apiKey: process.env.GROQ_API_KEY
 });
 
-const ACTIVE_MODEL_ID = "llama-3.3-70b-versatile";
+const ACTIVE_MODEL_ID = "llama-3.3-70b-specdec";
+
 
 function cleanAndParseJSON(rawString) {
     if (!rawString || typeof rawString !== 'string') {
