@@ -14,20 +14,40 @@ function cleanAndParseJSON(rawString) {
     text = text.replace(/<think>[\s\S]*?<\/think>/gi, "");
     text = text.replace(/```json/gi, "").replace(/```/g, "").trim();
 
+    // 1. Find the FIRST opening bracket
     const start = text.indexOf("{");
-    const end = text.lastIndexOf("}");
-
-    if (start === -1 || end === -1) {
+    if (start === -1) {
         return { html: `<div>${text}</div>` };
     }
 
-    text = text.substring(start, end + 1);
+    // 2. Extract from the first opening bracket to the end of the text
+    text = text.substring(start);
 
-    // 💡 ULTIMATE PARSING FIX: Clean up template bracket placeholders before running JSON.parse
+    // 💡 ULTIMATE TRAILING CLUTTER FIX: Match brackets dynamically from left to right 
+    // to find the exact closing bracket of the primary JSON object body.
+    let braceCount = 0;
+    let endPosition = -1;
+
+    for (let i = 0; i < text.length; i++) {
+        if (text[i] === "{") braceCount++;
+        if (text[i] === "}") braceCount--;
+
+        if (braceCount === 0) {
+            endPosition = i;
+            break; // Stop immediately when the main object closes!
+        }
+    }
+
+    // Slice out ONLY the exact primary JSON object block, omitting any conversational noise after it
+    if (endPosition !== -1) {
+        text = text.substring(0, endPosition + 1);
+    }
+
+    // 3. Clean up potential template bracket placeholders before running JSON.parse
     text = text.replace(/:\s*<number>/gi, ": 85");
     text = text.replace(/:\s*<string>/gi, ': "Completed"');
     text = text.replace(/:\s*<array>/gi, ": []");
-    text = text.replace(/<[^>]*>/g, "null"); // Replaces any leftover <tags> with safe null markers
+    text = text.replace(/<[^>]*>/g, "null"); 
 
     try {
         return JSON.parse(text);
@@ -35,7 +55,6 @@ function cleanAndParseJSON(rawString) {
         throw new Error(`JSON Structural Parsing Fault: ${e.message}`);
     }
 }
-
 
 
 async function generateInterviewReport({ resume, selfDescription, jobDescription }) {
