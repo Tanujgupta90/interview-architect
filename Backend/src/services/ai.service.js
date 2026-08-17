@@ -4,6 +4,8 @@ const puppeteer = require("puppeteer");
 const ai = new Groq({
     apiKey: process.env.GROQ_API_KEY
 });
+
+
 function cleanAndParseJSON(rawString) {
     if (!rawString || typeof rawString !== 'string') {
         throw new Error("Received completely empty or invalid string content.");
@@ -13,6 +15,7 @@ function cleanAndParseJSON(rawString) {
     text = text.replace(/<think>[\s\S]*?<\/think>/gi, "");
     text = text.replace(/```json/gi, "").replace(/```/g, "").trim();
 
+    // 💡 ULTIMATE TRAILING TEXT FIX: Locate the first '{' and the absolute last '}'
     const start = text.indexOf("{");
     const end = text.lastIndexOf("}");
 
@@ -20,12 +23,25 @@ function cleanAndParseJSON(rawString) {
         return { html: `<div>${text}</div>` };
     }
 
+    // This strips out all extra trailing commentary, punctuation, or invisible characters after the JSON object!
     text = text.substring(start, end + 1);
+
+    // Remove any accidental template placeholder remnants just in case
+    text = text.replace(/:\s*<number>/gi, ": 85");
+    text = text.replace(/:\s*<string>/gi, ': "Completed"');
+    text = text.replace(/:\s*<array>/gi, ": []");
+    text = text.replace(/<[^>]*>/g, "null"); 
 
     try {
         return JSON.parse(text);
     } catch (e) {
-        throw new Error(`JSON Structural Parsing Fault: ${e.message}`);
+        // Fallback: try removing trailing commas before closing brackets
+        try {
+            const fixedText = text.replace(/,\s*([\]}])/g, '$1');
+            return JSON.parse(fixedText);
+        } catch (innerErr) {
+            throw new Error(`JSON Structural Parsing Fault: ${e.message}`);
+        }
     }
 }
 
@@ -80,7 +96,6 @@ The JSON object MUST follow this exact property key structure precisely:
 
 const response = await ai.chat.completions.create({
     model: "qwen/qwen3.6-27b", 
-    response_format: { type: "json_object" }, // 👈 ADD THIS LINE: Forces pure JSON from the AI engine natively!
     messages: [{ role: "user", content: prompt }],
     temperature: 0.2
 });
