@@ -5,7 +5,6 @@ const ai = new Groq({
     apiKey: process.env.GROQ_API_KEY
 });
 
-const ACTIVE_MODEL_ID = "llama-3.3-70b-specdec";
 
 
 function cleanAndParseJSON(rawString) {
@@ -57,10 +56,11 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
                         }`;
 
         const response = await ai.chat.completions.create({
-            model: ACTIVE_MODEL_ID,
-            messages: [{ role: "user", content: prompt }],
-            temperature: 0.2
-        });
+    model: "llama-3.3-70b-specdec", 
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.2
+});
+
 
         const rawText = response.choices && response.choices[0] && response.choices[0].message ? response.choices[0].message.content : "";
         return cleanAndParseJSON(rawText);
