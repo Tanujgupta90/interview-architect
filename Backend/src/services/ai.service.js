@@ -65,9 +65,9 @@ Self Description: ${selfDescription}
 CRITICAL INSTRUCTIONS:
 1. You MUST return a single, valid JSON object. 
 2. Do NOT include any markdown blocks (like \`\`\`json), intro explanations, or trailing commentary text.
-3. Keep answers concise (under 2 sentences) to prevent token limits.
-4. You MUST generate exactly 3 distinct, real technical questions and answers.
-5. You MUST generate exactly 3 distinct, real behavioral questions and answers.
+3. Keep answers concise (under 2 sentences).
+4. You MUST generate exactly 3 distinct, real technical questions and answers. Each question object MUST include an "intention" field explaining what skill is being evaluated.
+5. You MUST generate exactly 3 distinct, real behavioral questions and answers. Each question object MUST include an "intention" field explaining the core competency checked.
 6. You MUST generate a full 3-day step-by-step roadmap array.
 
 The JSON object MUST follow this exact property key structure precisely:
@@ -75,14 +75,14 @@ The JSON object MUST follow this exact property key structure precisely:
   "matchScore": 85,
   "skillsGaps": ["TypeScript", "Docker", "State Management"],
   "technicalQuestions": [
-    { "question": "Real Technical Q1?", "answer": "Short Answer 1." },
-    { "question": "Real Technical Q2?", "answer": "Short Answer 2." },
-    { "question": "Real Technical Q3?", "answer": "Short Answer 3." }
+    { "intention": "Core Language Check", "question": "Real Technical Q1?", "answer": "Short Answer 1." },
+    { "intention": "Architecture Check", "question": "Real Technical Q2?", "answer": "Short Answer 2." },
+    { "intention": "Framework Check", "question": "Real Technical Q3?", "answer": "Short Answer 3." }
   ],
   "behavioralQuestions": [
-    { "question": "Real Behavioral Q1?", "answer": "Short Answer 1." },
-    { "question": "Real Behavioral Q2?", "answer": "Short Answer 2." },
-    { "question": "Real Behavioral Q3?", "answer": "Short Answer 3." }
+    { "intention": "Problem Solving Check", "question": "Real Behavioral Q1?", "answer": "Short Answer 1." },
+    { "intention": "Teamwork Check", "question": "Real Behavioral Q2?", "answer": "Short Answer 2." },
+    { "intention": "Conflict Check", "question": "Real Behavioral Q3?", "answer": "Short Answer 3." }
   ],
   "roadmap": [
     { "day": 1, "focus": "Day 1 Focus Topic", "tasks": ["Task 1", "Task 2"] },
@@ -91,6 +91,7 @@ The JSON object MUST follow this exact property key structure precisely:
   ]
 }
 `;
+
 
 // Inside Backend/src/services/ai.service.js -> generateInterviewReport function
 

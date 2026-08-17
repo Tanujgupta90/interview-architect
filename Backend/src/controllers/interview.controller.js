@@ -54,6 +54,19 @@ async function generateInterViewReportController(req, res) {
             };
         }
 
+         const normalizedTechnicalQuestions = (interViewReportByAi?.technicalQuestions || []).map((q, index) => ({
+            intention: q.intention || `Technical Assessment Step ${index + 1}`,
+            question: q.question || "Core Assessment Question",
+            answer: q.answer || "Review framework core concepts."
+        }));
+
+        const normalizedBehavioralQuestions = (interViewReportByAi?.behavioralQuestions || []).map((q, index) => ({
+            intention: q.intention || `Behavioral Competency Check ${index + 1}`,
+            question: q.question || "Core Assessment Question",
+            answer: q.answer || "Explain your technical problem-solving method."
+        }));
+        
+
         // Save cleanly using your active model parameters
         const savedReport = await interviewReportModel.create({
             user: req.user.id,
