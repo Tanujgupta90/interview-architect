@@ -49,89 +49,32 @@ Self Description: ${selfDescription}
 CRITICAL INSTRUCTIONS:
 1. You MUST return a single, valid JSON object. 
 2. Do NOT include any markdown blocks (like \`\`\`json), intro explanations, or trailing commentary text.
-3. Ensure that values do NOT contain unescaped newline breaks or raw carriage returns.
-4. You MUST generate exactly 5 distinct, real technical questions and answers.
-5. You MUST generate exactly 5 distinct, real behavioral questions and answers.
-6. You MUST generate a full 5-day step-by-step roadmap array.
+3. Keep answers concise (under 2 sentences) to prevent token limits.
+4. You MUST generate exactly 3 distinct, real technical questions and answers.
+5. You MUST generate exactly 3 distinct, real behavioral questions and answers.
+6. You MUST generate a full 3-day step-by-step roadmap array.
 
 The JSON object MUST follow this exact property key structure precisely:
 {
   "matchScore": 85,
   "skillsGaps": ["TypeScript", "Docker", "State Management"],
   "technicalQuestions": [
-    {
-      "question": "Real Technical Question 1?",
-      "answer": "Real Detailed Technical Answer 1."
-    },
-    {
-      "question": "Real Technical Question 2?",
-      "answer": "Real Detailed Technical Answer 2."
-    },
-    {
-      "question": "Real Technical Question 3?",
-      "answer": "Real Detailed Technical Answer 3."
-    },
-    {
-      "question": "Real Technical Question 4?",
-      "answer": "Real Detailed Technical Answer 4."
-    },
-    {
-      "question": "Real Technical Question 5?",
-      "answer": "Real Detailed Technical Answer 5."
-    }
+    { "question": "Real Technical Q1?", "answer": "Short Answer 1." },
+    { "question": "Real Technical Q2?", "answer": "Short Answer 2." },
+    { "question": "Real Technical Q3?", "answer": "Short Answer 3." }
   ],
   "behavioralQuestions": [
-    {
-      "question": "Real Behavioral Question 1?",
-      "answer": "Real Detailed Behavioral Answer 1."
-    },
-    {
-      "question": "Real Behavioral Question 2?",
-      "answer": "Real Detailed Behavioral Answer 2."
-    },
-    {
-      "question": "Real Behavioral Question 3?",
-      "answer": "Real Detailed Behavioral Answer 3."
-    },
-    {
-      "question": "Real Behavioral Question 4?",
-      "answer": "Real Detailed Behavioral Answer 4."
-    },
-    {
-      "question": "Real Behavioral Question 5?",
-      "answer": "Real Detailed Behavioral Answer 5."
-    }
+    { "question": "Real Behavioral Q1?", "answer": "Short Answer 1." },
+    { "question": "Real Behavioral Q2?", "answer": "Short Answer 2." },
+    { "question": "Real Behavioral Q3?", "answer": "Short Answer 3." }
   ],
   "roadmap": [
-    {
-      "day": 1,
-      "focus": "Day 1 Focus Topic",
-      "tasks": ["Task 1", "Task 2"]
-    },
-    {
-      "day": 2,
-      "focus": "Day 2 Focus Topic",
-      "tasks": ["Task 1", "Task 2"]
-    },
-    {
-      "day": 3,
-      "focus": "Day 3 Focus Topic",
-      "tasks": ["Task 1", "Task 2"]
-    },
-    {
-      "day": 4,
-      "focus": "Day 4 Focus Topic",
-      "tasks": ["Task 1", "Task 2"]
-    },
-    {
-      "day": 5,
-      "focus": "Day 5 Focus Topic",
-      "tasks": ["Task 1", "Task 2"]
-    }
+    { "day": 1, "focus": "Day 1 Focus Topic", "tasks": ["Task 1", "Task 2"] },
+    { "day": 2, "focus": "Day 2 Focus Topic", "tasks": ["Task 1", "Task 2"] },
+    { "day": 3, "focus": "Day 3 Focus Topic", "tasks": ["Task 1", "Task 2"] }
   ]
 }
 `;
-
 
 
 
