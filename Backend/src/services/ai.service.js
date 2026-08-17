@@ -76,14 +76,14 @@ The JSON object MUST follow this exact property key structure precisely:
 }
 `;
 
+// Inside Backend/src/services/ai.service.js -> generateInterviewReport function
 
-
-        const response = await ai.chat.completions.create({
-    model: "qwen/qwen3.6-27b", // 👈 FIXED: Swapped to Groq's active model ID
+const response = await ai.chat.completions.create({
+    model: "qwen/qwen3.6-27b", 
+    response_format: { type: "json_object" }, // 👈 ADD THIS LINE: Forces pure JSON from the AI engine natively!
     messages: [{ role: "user", content: prompt }],
     temperature: 0.2
 });
-
 
 
         const rawText = response.choices && response.choices[0] && response.choices[0].message ? response.choices[0].message.content : "";
