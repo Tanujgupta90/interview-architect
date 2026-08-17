@@ -4,7 +4,6 @@ const puppeteer = require("puppeteer");
 const ai = new Groq({
     apiKey: process.env.GROQ_API_KEY
 });
-
 function cleanAndParseJSON(rawString) {
     if (!rawString || typeof rawString !== 'string') {
         throw new Error("Received completely empty or invalid string content.");
@@ -14,42 +13,14 @@ function cleanAndParseJSON(rawString) {
     text = text.replace(/<think>[\s\S]*?<\/think>/gi, "");
     text = text.replace(/```json/gi, "").replace(/```/g, "").trim();
 
-    // 1. Find the FIRST opening bracket
     const start = text.indexOf("{");
-    if (start === -1) {
+    const end = text.lastIndexOf("}");
+
+    if (start === -1 || end === -1) {
         return { html: `<div>${text}</div>` };
     }
 
-    // 2. Extract from the first opening bracket to the end of the text
-    text = text.substring(start);
-
-    // Match brackets dynamically from left to right 
-    let braceCount = 0;
-    let endPosition = -1;
-
-    for (let i = 0; i < text.length; i++) {
-        if (text[i] === "{") braceCount++;
-        if (text[i] === "}") braceCount--;
-
-        if (braceCount === 0) {
-            endPosition = i;
-            break; 
-        }
-    }
-
-    if (endPosition !== -1) {
-        text = text.substring(0, endPosition + 1);
-    }
-
-    // 💡 ULTIMATE UNTERMINATED STRING FIX: Replace actual newlines inside strings with escaped \n characters
-    // This stops unescaped multi-line responses from breaking the standard JSON parser!
-    text = text.replace(/\n/g, "\\n").replace(/\r/g, "\\r");
-
-    // 3. Clean up potential template bracket placeholders before running JSON.parse
-    text = text.replace(/:\s*<number>/gi, ": 85");
-    text = text.replace(/:\s*<string>/gi, ': "Completed"');
-    text = text.replace(/:\s*<array>/gi, ": []");
-    text = text.replace(/<[^>]*>/g, "null"); 
+    text = text.substring(start, end + 1);
 
     try {
         return JSON.parse(text);
@@ -57,6 +28,7 @@ function cleanAndParseJSON(rawString) {
         throw new Error(`JSON Structural Parsing Fault: ${e.message}`);
     }
 }
+
 
 
 async function generateInterviewReport({ resume, selfDescription, jobDescription }) {
@@ -74,39 +46,37 @@ You are an expert technical interviewer. Analyze this job description and profil
 Job Description: ${jobDescription}
 Self Description: ${selfDescription}
 
-You MUST return a single JSON object. Do NOT include any intro text, conversational words, or trailing text. 
+CRITICAL INSTRUCTION: You MUST return a single, valid JSON object. 
+Do NOT include any markdown blocks, intro explanations, or trailing commentary text. 
+Ensure that values do NOT contain unescaped newline breaks or raw carriage returns. 
+
 The JSON object MUST follow this exact property key structure:
 {
   "matchScore": 85,
   "skillsGaps": ["TypeScript", "Docker", "State Management"],
   "technicalQuestions": [
     {
-      "question": "What is the difference between Virtual DOM and Real DOM in React?",
-      "answer": "The Virtual DOM is an in-memory representation of the real DOM. React uses it to compute diffs and update the browser efficiently."
-    },
-    {
-      "question": "How do you handle state management across large scale modern JavaScript applications?",
-      "answer": "By using centralized stores like Redux Toolkit, Zustand, or the native Context API combined with custom hooks for modularity."
+      "question": "Explain closure in JavaScript.",
+      "answer": "A closure gives an inner function access to the outer function scope even after the outer function returns."
     }
   ],
   "behavioralQuestions": [
     {
-      "question": "Tell me about a time you faced a complex technical bug under a tight release deadline. How did you handle it?",
-      "answer": "I isolated the issue using chrome dev tools, prioritized a hotfix to restore stability, and documented the root cause for later clean up."
+      "question": "Tell me about a challenge you solved.",
+      "answer": "I isolated a production routing bug by testing individual middleware pipelines step-by-step."
     }
   ],
   "roadmap": [
     {
-      "step": "Phase 1: Advanced Frontend Core",
-      "topics": ["Deep dive into React lifecycle methods", "Mastering CSS Grid layouts and responsive engineering architectures"]
-    },
-    {
-      "step": "Phase 2: Database and System Infrastructure",
-      "topics": ["RESTful API design safety layers", "Relational database indices optimization and schema normalization"]
+      "day": 1,
+      "focus": "Core Language Engineering Foundations",
+      "tasks": ["Review prototype inheritance mechanisms", "Practice asynchronous loop processing structures"]
     }
   ]
 }
 `;
+
+
 
 
         const response = await ai.chat.completions.create({
