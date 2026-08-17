@@ -110,35 +110,30 @@ const Interview = () => {
                     <button
 
 onClick={async () => {
-    // 1. OPEN THE TAB IMMEDIATELY right at the moment of click! 
-    // This stops the browser's popup blocker from killing the window.
-    const printWindow = window.open("", "_blank");
-    
-    if (!printWindow) {
-        alert("Please allow popups for this website to print your resume!");
-        return;
-    }
-
-    // Put a clean temporary loading message inside the tab so the user knows it's working
-    printWindow.document.write("<html><head><title>Generating Resume...</title></head><body style='font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; color:#64748b;'><h2>AI Architect is compiling your tailored resume layout...</h2></body></html>");
-    printWindow.document.close();
-
     try {
-        // 2. Fetch the custom AI-generated resume HTML layout stream from Render
-        const htmlPayload = await generateResumePdf({ interviewReportId: interviewId });
+        // 1. Call the API (Make sure it fetches as a file chunk)
+        const response = await API.post(`/api/interview/resume/pdf/${interviewId}`, {}, {
+            responseType: 'blob' // 👈 Forces the browser to handle it as a physical file, not code text
+        });
         
-        // 3. Wipe out the temporary loading text and inject the real tailored resume code structure
-        printWindow.document.open();
-        printWindow.document.write(htmlPayload);
-        printWindow.document.close();
+        // 2. Create a temporary hidden download link in memory
+        const blobUrl = window.URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
+        const linkElement = document.createElement('a');
         
-        // 4. Force the browser to trigger its system PDF print dialog interface smoothly
-        printWindow.print();
+        linkElement.href = blobUrl;
+        linkElement.setAttribute('download', `AI_Tailored_Resume_${interviewId}.pdf`);
         
+        // 3. Trigger the download automatically
+        document.body.appendChild(linkElement);
+        linkElement.click();
+        
+        // 4. Clean up memory allocations safely
+        linkElement.parentNode.removeChild(linkElement);
+        window.URL.revokeObjectURL(blobUrl);
+
     } catch (error) {
-        console.error("Failed to compile AI resume:", error);
-        printWindow.close(); // Close the tab cleanly if the server encounters an error
-        alert("The server encountered a rate-limit cooldown. Please wait a minute and try again.");
+        console.error("Failed to download AI resume file:", error);
+        alert("Could not process your resume layout sheets. Try again in a minute.");
     }
 }}
 
