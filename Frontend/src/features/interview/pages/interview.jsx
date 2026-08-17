@@ -59,13 +59,19 @@ const RoadMapDay = ({ day }) => (
 const Interview = () => {
     const [ activeNav, setActiveNav ] = useState('technical')
     const { report, getReportById, loading, getResumePdf } = useInterview()
-    const { interviewId } = useParams()
+        const { interviewId: routeId } = useParams()
+    
+    // Safely extract the ID from either the router param or the hash URL string directly
+    const interviewId = routeId || window.location.hash.split('/').pop()?.split('?')[0];
 
     useEffect(() => {
-        if (interviewId) {
+        if (interviewId && interviewId !== "interview") {
             getReportById(interviewId)
+        } else {
+            console.error("Invalid Interview ID detected:", interviewId)
         }
     }, [ interviewId ])
+
 
     if (loading || !report) {
         return (
