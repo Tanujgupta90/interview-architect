@@ -35,6 +35,9 @@ export const getAllInterviewReports = async () => {
  * @description Service to generate resume pdf based on user self description, resume content and job description.
  */
 export const generateResumePdf = async ({ interviewReportId }) => {
-    const response = await API.post(`/api/interview/resume/pdf/${interviewReportId}`, {});
+    // 💡 FIXED: Enforce 'blob' response type so Axios handles raw binary data stream cleanly
+    const response = await API.post(`/api/interview/resume/pdf/${interviewReportId}`, {}, {
+        responseType: 'blob' 
+    });
     return response.data;
 };
