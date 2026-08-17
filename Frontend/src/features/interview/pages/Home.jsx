@@ -12,7 +12,6 @@ const Home = () => {
 
     const navigate = useNavigate()
 
-
     const handleGenerateReport = async () => {
         const resumeFile = resumeInputRef.current?.files?.[0]
 
@@ -23,13 +22,14 @@ const Home = () => {
         }
 
         try {
-            // 2. Use FormData to combine files and text strings together correctly
+            // 2. Use FormData to package the fields correctly
             const formData = new FormData()
             formData.append("jobDescription", jobDescription)
             formData.append("selfDescription", selfDescription)
             
             if (resumeFile) {
-                formData.append("resumeFile", resumeFile) // Make sure this key matches your backend file upload middleware name!
+                // 👈 FIXED: Changed from "resumeFile" to "resume" to match your backend multer middleware exactly!
+                formData.append("resume", resumeFile) 
             }
 
             // 3. Send the formData block directly to your hook handler
