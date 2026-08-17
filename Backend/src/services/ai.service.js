@@ -56,10 +56,11 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
                         }`;
 
         const response = await ai.chat.completions.create({
-    model: "llama-3.3-70b-specdec", 
+    model: "qwen/qwen3.6-27b", // 👈 FIXED: Swapped to Groq's active model ID
     messages: [{ role: "user", content: prompt }],
     temperature: 0.2
 });
+
 
 
         const rawText = response.choices && response.choices[0] && response.choices[0].message ? response.choices[0].message.content : "";
