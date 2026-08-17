@@ -135,17 +135,18 @@ async function generateResumePdf({ resume, jobDescription, selfDescription }) {
             temperature: 0.2
         });
 
-        let rawHtml = response.choices && response.choices[0] && response.choices[0].message ? response.choices[0].message.content : "";
+               let rawHtml = response.choices && response.choices[0] && response.choices[0].message ? response.choices[0].message.content : "";
         
-        // Strip out any accidental markdown wrapper tags if the AI includes them
+        // 💡 FIXED: Strip out any structural <think> chains or markdown tag wrappers completely
+        rawHtml = rawHtml.replace(/<think>[\s\S]*?<\/think>/gi, ""); 
         rawHtml = rawHtml.replace(/```html/gi, "").replace(/```/g, "").trim();
 
-        if (!rawHtml.includes("<DOCTYPE html>") && !rawHtml.includes("<html")) {
+        if (!rawHtml.includes("<!DOCTYPE html>") && !rawHtml.includes("<html")) {
             rawHtml = `<!DOCTYPE html><html><head><style>body{font-family: 'Segoe UI',Arial,sans-serif;padding:45px;color:#1e293b;line-height:1.5;}</style></head><body>${rawHtml}</body></html>`;
         }
 
-        // 💡 FIXED: Return the raw HTML string text directly instead of converting it to a PDF file buffer!
         return rawHtml;
+
 
     } catch (error) {
         console.error("PDF GENERATION EXCEPTION:", error);
