@@ -12,30 +12,28 @@ function cleanAndParseJSON(rawString) {
     }
     
     let text = rawString.trim();
+    
+    // 1. Completely strip AI thinking steps if present
     text = text.replace(/<think>[\s\S]*?<\/think>/gi, "");
+    
+    // 2. Clear out markdown code block backticks if present
     text = text.replace(/```json/gi, "").replace(/```/g, "").trim();
 
-    // 💡 ULTIMATE TRAILING TEXT FIX: Locate the first '{' and the absolute last '}'
+    // 💡 THE CRITICAL FIX: Find where the ACTUAL JSON object starts and ends!
     const start = text.indexOf("{");
     const end = text.lastIndexOf("}");
 
     if (start === -1 || end === -1) {
-        return { html: `<div>${text}</div>` };
+        throw new Error("Could not find any structural JSON brackets inside AI response text.");
     }
 
-    // This strips out all extra trailing commentary, punctuation, or invisible characters after the JSON object!
+    // This throws away any intro sentences or conversational text outside the curly braces!
     text = text.substring(start, end + 1);
-
-    // Remove any accidental template placeholder remnants just in case
-    text = text.replace(/:\s*<number>/gi, ": 85");
-    text = text.replace(/:\s*<string>/gi, ': "Completed"');
-    text = text.replace(/:\s*<array>/gi, ": []");
-    text = text.replace(/<[^>]*>/g, "null"); 
 
     try {
         return JSON.parse(text);
     } catch (e) {
-        // Fallback: try removing trailing commas before closing brackets
+        // Fallback: try automatically removing trailing commas before closing brackets
         try {
             const fixedText = text.replace(/,\s*([\]}])/g, '$1');
             return JSON.parse(fixedText);
