@@ -26,18 +26,28 @@ async function generateInterViewReportController(req, res) {
                 jobDescription
             });
         } catch (aiError) {
-            console.error("AI Engine Failure, deploying fallback payload:", aiError.message);
-            // Fallback object if Groq fails to parse or returns bad syntax
+            console.error("AI Engine Failure, deploying schema-safe fallback payload:", aiError.message);
+            
+            // 💡 FIXED SCHEMA STRUCTURE: Matches array objects and 'intention' properties exactly
             interViewReportByAi = {
                 matchScore: 75,
                 title: "General Web Development Position",
-                technicalQuestions: [{ question: "Explain event bubbling in JavaScript.", answer: "Event bubbling is a type of event propagation where the event first triggers on the innermost target element and then bubbles up." }],
-                behavioralQuestions: [{ question: "Describe a difficult project challenge.", answer: "I broke down the dependencies and resolved issues step-by-step." }],
-                skillGaps: ["Review system logs", "Optimize framework flow"],
-                preparationPlan: "Focus on core debugging and architecture optimization."
+                technicalQuestions: [{ 
+                    intention: "Core Language Check",
+                    question: "Explain event bubbling in JavaScript.", 
+                    answer: "Event bubbling is a type of event propagation where the event first triggers on the innermost target element and then bubbles up." 
+                }],
+                behavioralQuestions: [{ 
+                    intention: "Problem Solving Check",
+                    question: "Describe a difficult project challenge.", 
+                    answer: "I broke down the dependencies and resolved issues step-by-step." 
+                }],
+                skillGaps: [{ intention: "Improvement Check", detail: "Review system logs and optimize framework flow" }],
+                preparationPlan: { intention: "Action Track", detail: "Focus on core debugging and architecture optimization." }
             };
         }
 
+        // Save cleanly using the safe, unpacked fields
         const savedReport = await interviewReportModel.create({
             user: req.user.id,
             resume: parsedResumeText || "Not provided",
@@ -48,7 +58,7 @@ async function generateInterViewReportController(req, res) {
             technicalQuestions: interViewReportByAi?.technicalQuestions || [],
             behavioralQuestions: interViewReportByAi?.behavioralQuestions || [],
             skillGaps: interViewReportByAi?.skillGaps || [],
-            preparationPlan: interViewReportByAi?.preparationPlan || "Standard study track"
+            preparationPlan: interViewReportByAi?.preparationPlan || { intention: "Default", detail: "Standard study track" }
         });
 
         console.log("=== DISPATCHING PACKED MONGO DOCUMENT OVER TO CLIENT ===");
@@ -66,6 +76,7 @@ async function generateInterViewReportController(req, res) {
         });
     }
 }
+
 
 
 /**
